@@ -12,8 +12,11 @@ class Sensor(MqttDevice):
     def start_sensing(self):
         """a blocking event loop that waits for detection events, in this case Enter presses"""
         while True:
-            input("Press Enter when 🚗 detected!")
-            self.on_detection("Car detection took place")
+            user_input = input("Press E when 🚗 enters or press X when 🚗 exits: ").strip().lower()
+            if user_input == "e":
+                self.on_detection("Entered")
+            elif user_input == "x":
+                self.on_detection("Exited")
 
 
 if __name__ == '__main__':

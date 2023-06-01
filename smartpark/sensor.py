@@ -1,7 +1,6 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
-import paho.mqtt.client as paho
-from smartpark.mqtt_device import MqttDevice
+from mqtt_device import MqttDevice
 
 
 class Sensor(MqttDevice):

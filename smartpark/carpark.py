@@ -1,6 +1,6 @@
-from mqtt_device import MqttDevice
+from smartpark.mqtt_device import MqttDevice
 from datetime import datetime
-import random
+import json
 
 
 class Carpark(MqttDevice):
@@ -11,32 +11,69 @@ class Carpark(MqttDevice):
         super().__init__(config)
         self.total_spaces = config['total-spaces']
         self.total_cars = config['total-cars']
+        self._temperature = None
         self.client.on_message = self.on_message
-        self.client.subscribe('+/+/+/+')
+        self.client.subscribe('sensor')
         self.client.loop_forever()
 
     @property
-    def get_available_spaces(self):
+    def temperature(self):
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, value):
+        self._temperature = value
+
+    @property
+    def available_spaces(self):
+        """
+            Gets the difference of total spaces and total cars.
+            Return: int
+        """
         return self.total_spaces - self.total_cars
 
     def _publish_update(self):
-        current_time = datetime.now().strftime('%H:%M')
-        message = f"Time: {current_time}, Spaces: {self.get_available_spaces}, Temperature: {random.uniform(0, 40)}"
+        """
+            Publish data to MQTT
+        """
+        current_time = datetime.now().strftime("%H:%M")
+
+        data = {
+            'time': current_time,
+            'temperature': self.temperature,
+            'spaces': self.available_spaces,
+            'total-spaces': self.total_spaces
+        }
+        message = json.dumps(data)
         print(message)
-        self.client.publish('display', message)
+        self.client.publish('carpark', message)
 
     def on_enter(self):
+        """
+            Increase total cars if there's at least one empty space, then publish data to MQTT
+        """
         self.total_cars += 1 if self.total_cars < self.total_spaces else 0
         # TODO: Publish to MQTT
         self._publish_update()
 
     def on_exit(self):
+        """
+            Decrease total cars if there's at least one car, then publish data to MQTT
+        """
         self.total_cars -= 1 if self.total_cars > 0 else 0
         # TODO: Publish to MQTT
         self._publish_update()
 
     def on_message(self, client, userdata, message):
-        print(f'Received {message.payload.decode("utf-8")}')
+        data = message.payload.decode("utf-8").strip()
+        print(f'Received {data}')
+
+        self.temperature = float(data.split(", ")[1])
+
+        if 'Entered' in data:
+            self.on_enter()
+        elif 'Exited' in data:
+            self.on_exit()
 
 
 if __name__ == '__main__':
@@ -51,4 +88,3 @@ if __name__ == '__main__':
               }
 
     carpark = Carpark(config)
-    print("Carpark initialized")

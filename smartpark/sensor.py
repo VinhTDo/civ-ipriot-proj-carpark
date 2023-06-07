@@ -1,12 +1,17 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
-from mqtt_device import MqttDevice
+from smartpark.mqtt_device import MqttDevice
+import random
 
 
 class Sensor(MqttDevice):
+    @property
+    def temperature(self):
+        return round(random.uniform(0, 40), 1)
+
     def on_detection(self, message):
         """The method that is triggered when a detection occurs"""
-        self.client.publish(self.topic, message)
+        self.client.publish('sensor', f"{message}, {self.temperature}")
 
     def start_sensing(self):
         """a blocking event loop that waits for detection events, in this case Enter presses"""
@@ -16,6 +21,8 @@ class Sensor(MqttDevice):
                 self.on_detection("Entered")
             elif user_input == "x":
                 self.on_detection("Exited")
+            else:
+                print("Invalid input!!!")
 
 
 if __name__ == '__main__':

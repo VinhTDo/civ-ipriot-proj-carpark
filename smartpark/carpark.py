@@ -46,7 +46,6 @@ class Carpark(MqttDevice):
             'total-spaces': self.total_spaces
         }
         message = json.dumps(data)
-        print(message)
         self.client.publish('carpark', message)
 
         try:
@@ -64,6 +63,7 @@ class Carpark(MqttDevice):
 
         config_data['CarParks'][0]['total-cars'] = self.total_cars
 
+        # Updates the config file
         write_handler = open(config_path, 'w')
         write_handler.write(json.dumps(config_data))
         write_handler.close()
@@ -85,8 +85,9 @@ class Carpark(MqttDevice):
         self._publish_update()
 
     def on_message(self, client, userdata, message):
+        """This method is called when a client is published with a specified topic"""
         data = message.payload.decode("utf-8").strip()
-        print(f'Received {data}')
+        print(f'Received: {data}')
 
         self.temperature = float(data.split(", ")[1])
 
@@ -98,7 +99,6 @@ class Carpark(MqttDevice):
 
 if __name__ == '__main__':
     config_path = '../config.json'
-    config = None
 
     try:
         handler = open(config_path, 'r')
@@ -114,7 +114,5 @@ if __name__ == '__main__':
     if not config:
         print("Error!!! Cannot proceed!")
         sys.exit()
-
-    print(config)
 
     carpark = Carpark(config['CarParks'][0])

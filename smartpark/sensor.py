@@ -29,7 +29,6 @@ class Sensor(MqttDevice):
 
 if __name__ == '__main__':
     config_path = '../config.json'
-    config = None
 
     try:
         handler = open(config_path, 'r')
@@ -45,8 +44,6 @@ if __name__ == '__main__':
     if not config:
         print("Error!!! Cannot proceed!")
         sys.exit()
-
-    print(config)
 
     sensor = Sensor(config['CarParks'][0])
     print("Sensor initialized")

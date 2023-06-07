@@ -32,7 +32,13 @@ Finally, you can use `yaml` if you prefer.
 """
 
 
-
 def parse_config(config: dict) -> dict:
     """Parse the config file and return the values as a dictionary"""
-    return {'location': 'TBD', 'total_spaces': 0, 'broker_host': 'TBD', 'broker_port': 0}
+    return {
+        'name': config['name'],
+        'location': config['location'],
+        'total-cars': config['total-cars'],
+        'total-spaces': config['total-spaces'],
+        'broker': config['broker'],
+        'port': config['port']
+    }

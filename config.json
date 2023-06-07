@@ -1,0 +1,29 @@
+{
+    "CarParks": [
+        {
+            "name": "vinhdo-carpark",
+            "total-spaces": 130,
+            "total-cars": 0,
+            "topic-root": "lot",
+            "topic-qualifier": "na",
+            "location": "moondalup",
+            "broker": "localhost",
+            "port": 1883,
+            "Sensors": [
+                {
+                    "name": "entry-sensor",
+                    "type": "entry"
+                },
+                {
+                    "name": "exit-sensor",
+                    "type": "exit"
+                }
+            ],
+            "Displays": [
+                {
+                    "name": "display"
+                }
+            ]
+        }
+    ]
+}

@@ -1,7 +1,9 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
 from smartpark.mqtt_device import MqttDevice
+import sys
 import random
+import json
 
 
 class Sensor(MqttDevice):
@@ -26,14 +28,26 @@ class Sensor(MqttDevice):
 
 
 if __name__ == '__main__':
-    config = {'name': 'super sensor',
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry'
-              }
+    config_path = '../config.json'
+    config = None
 
-    sensor = Sensor(config)
+    try:
+        handler = open(config_path, 'r')
+        try:
+            config = json.load(handler)
+        except IOError:
+            print("Something went wrong with this process!!!")
+        finally:
+            handler.close()
+    except FileNotFoundError:
+        print(f"{config_path} doesn't exists!!!")
+
+    if not config:
+        print("Error!!! Cannot proceed!")
+        sys.exit()
+
+    print(config)
+
+    sensor = Sensor(config['CarParks'][0])
     print("Sensor initialized")
     sensor.start_sensing()

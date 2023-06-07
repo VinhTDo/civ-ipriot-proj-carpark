@@ -1,6 +1,7 @@
 from smartpark.mqtt_device import MqttDevice
 from datetime import datetime
 import json
+import sys
 
 
 class Carpark(MqttDevice):
@@ -48,6 +49,25 @@ class Carpark(MqttDevice):
         print(message)
         self.client.publish('carpark', message)
 
+        try:
+            handler = open(config_path, 'r')
+
+            try:
+                config_data = json.load(handler)
+            except IOError:
+                print("Unexpected error! Cannot perform action!")
+            finally:
+                handler.close()
+
+        except FileNotFoundError:
+            print(f"{config_path} doesn't exist")
+
+        config_data['CarParks'][0]['total-cars'] = self.total_cars
+
+        write_handler = open(config_path, 'w')
+        write_handler.write(json.dumps(config_data))
+        write_handler.close()
+
     def on_enter(self):
         """
             Increase total cars if there's at least one empty space, then publish data to MQTT
@@ -77,14 +97,24 @@ class Carpark(MqttDevice):
 
 
 if __name__ == '__main__':
-    config = {'name': 'carpark sensor',
-              'total-spaces': 140,
-              'total-cars': 0,
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry'
-              }
+    config_path = '../config.json'
+    config = None
 
-    carpark = Carpark(config)
+    try:
+        handler = open(config_path, 'r')
+        try:
+            config = json.load(handler)
+        except IOError:
+            print("Something went wrong with this process!!!")
+        finally:
+            handler.close()
+    except FileNotFoundError:
+        print(f"{config_path} doesn't exists!!!")
+
+    if not config:
+        print("Error!!! Cannot proceed!")
+        sys.exit()
+
+    print(config)
+
+    carpark = Carpark(config['CarParks'][0])

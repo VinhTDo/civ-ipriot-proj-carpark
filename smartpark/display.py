@@ -1,4 +1,4 @@
-from smartpark.mqtt_device import MqttDevice
+from mqtt_device import MqttDevice
 import json
 import sys
 

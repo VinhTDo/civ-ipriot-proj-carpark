@@ -1,6 +1,6 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
-from smartpark.mqtt_device import MqttDevice
+from mqtt_device import MqttDevice
 import sys
 import random
 import json

@@ -1,4 +1,4 @@
-from smartpark.mqtt_device import MqttDevice
+from mqtt_device import MqttDevice
 from datetime import datetime
 import json
 import sys
@@ -65,7 +65,7 @@ class Carpark(MqttDevice):
 
         # Updates the config file
         write_handler = open(config_path, 'w')
-        write_handler.write(json.dumps(config_data))
+        write_handler.write(json.dumps(config_data, indent=4))
         write_handler.close()
 
     def on_enter(self):

@@ -46,10 +46,12 @@ class Carpark(MqttDevice):
             'total-spaces': self.total_spaces
         }
         message = json.dumps(data)
+
+        print(f'Publish data: {data}')
         self.client.publish('carpark', message)
 
         try:
-            handler = open(config_path, 'r')
+            handler = open('../config.json', 'r')
 
             try:
                 config_data = json.load(handler)
@@ -59,12 +61,12 @@ class Carpark(MqttDevice):
                 handler.close()
 
         except FileNotFoundError:
-            print(f"{config_path} doesn't exist")
+            print(f"config.json doesn't exist")
 
         config_data['CarParks'][0]['total-cars'] = self.total_cars
 
         # Updates the config file
-        write_handler = open(config_path, 'w')
+        write_handler = open('../config.json', 'w')
         write_handler.write(json.dumps(config_data, indent=4))
         write_handler.close()
 
@@ -98,10 +100,8 @@ class Carpark(MqttDevice):
 
 
 if __name__ == '__main__':
-    config_path = '../config.json'
-
     try:
-        handler = open(config_path, 'r')
+        handler = open('../config.json', 'r')
         try:
             config = json.load(handler)
         except IOError:
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         finally:
             handler.close()
     except FileNotFoundError:
-        print(f"{config_path} doesn't exists!!!")
+        print("config.json doesn't exists!!!")
 
     if not config:
         print("Error!!! Cannot proceed!")

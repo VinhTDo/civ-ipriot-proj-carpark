@@ -28,10 +28,8 @@ class Sensor(MqttDevice):
 
 
 if __name__ == '__main__':
-    config_path = '../config.json'
-
     try:
-        handler = open(config_path, 'r')
+        handler = open('../config.json', 'r')
         try:
             config = json.load(handler)
         except IOError:
@@ -39,7 +37,7 @@ if __name__ == '__main__':
         finally:
             handler.close()
     except FileNotFoundError:
-        print(f"{config_path} doesn't exists!!!")
+        print("config.json doesn't exists!!!")
 
     if not config:
         print("Error!!! Cannot proceed!")

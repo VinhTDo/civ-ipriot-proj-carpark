@@ -98,6 +98,9 @@ class CarParkDisplay(MqttDevice):
             f'{data["spaces"] if data["spaces"] > 0 else "FULL"}',
             f'{data["temperature"]}℃',
             data["time"]]))
+
+        time.sleep(1)
+
         # When you get an update, refresh the display.
         self.window.update(field_values)
 
